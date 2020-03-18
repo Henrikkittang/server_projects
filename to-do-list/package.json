@@ -1,0 +1,22 @@
+{
+  "name": "to-do-list",
+  "version": "1.0.0",
+  "description": "post-it notes with tasks to do",
+  "main": "main.js",
+  "scripts": {
+    "start": "nodemon main.js"
+  },
+  "keywords": [
+    "post-it"
+  ],
+  "nodemonConfig": {
+    "ignore": ["data.json"]
+  },
+  "author": "Henrik Melfald Kittang",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "nodemon": "^2.0.2"
+  }
+}

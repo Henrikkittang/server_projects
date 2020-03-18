@@ -1,0 +1,30 @@
+{
+    "name": "chat",
+    "version": "1.0.0",
+    "description": "a simple chat project",
+    "main": "main.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon main.js"
+    },
+    "keywords": [
+        "chat",
+        "database"
+    ],
+    "nodemonConfig": {
+        "ignore": [
+            "database/*",
+            "public/*"
+        ]
+    },
+    "author": "Henrik Melfald Kittang",
+    "license": "MIT",
+    "dependencies": {
+        "bcrypt": "^3.0.6",
+        "express": "^4.17.1",
+        "nodemon": "^1.19.1",
+        "random-key": "^0.3.2",
+        "socket.io": "^2.2.0",
+        "socketio-auth": "^0.1.1"
+    }
+}

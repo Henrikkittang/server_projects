@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Drag n Drop</title>
+
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <header>
+
+
+        </header>
+        
+        <main>
+            <div class="column">
+                <div class="task_header">
+                    <h1>To Do</h1>
+                    <input type="text" id="new_task_inp">
+                    <button id="new_task_button">Send</button>
+                    <p id="progress"></p>
+                </div>
+                <div class="tasks_wrapper" id="to_do">
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="task_header">
+                    <h1>Doing</h1>
+                </div>
+
+                <div class="tasks_wrapper" id="doing">
+
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="task_header">
+                    <h1>Done</h1>
+                </div>
+
+                <div class="tasks_wrapper" id="done">
+
+                </div>
+            </div>
+
+        </main>
+
+        <script src="project.js"></script>
+    </body>
+</html>

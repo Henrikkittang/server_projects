@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Chat</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <h1>Chat project</h1>
+                                
+        <main class="index_main">
+            <section class="room_list">
+                <div class="new_rom_wrapper">
+                    <h1>Your rooms</h1>  
+                    <input type="text" id="room_inp">
+                    <button type="button" id="room_btn">Send</button>                  
+                </div>
+                <div class="room_btn_wrapper"></div>
+            </section>
+            
+            <section class="main_window" >
+                <h1 id="chat_header">...</h1>
+                <div class="messages_wrapper">
+                    <div class="messagesContainer"></div>
+                    
+                    <div class="broadcaster_wrapper">
+                        <p class="broadcaster"></p>
+                    </div>  
+                                               
+                </div>
+                <div class="input_wrapper">
+                    <input type="text" id="message_inp" placeholder="Message">                        
+                    
+                    <div style="display: inline-block;">
+                        <input type="file" id="fileSelector" class="inputfile">
+                        <label for="fileSelector" class="inputfile_label">Choose a file</label>    
+                    </div>
+                </div>   
+            </section>
+            
+            <section class="room_settings">
+                <div>
+                    <h1>Add user to room</h1>
+                    <input type="text" id="new_user_inp">
+                    <button type="button" id="new_user_btn">Send</button> 
+                </div>
+                <hr>  
+                <div>
+                    <h3>Room members</h3>
+                    <div id="room_members_wrapper"></div>
+                </div> 
+            </section>
+                
+            <section class="user_wrapper">
+                <h1>Active Users</h1>
+                <p id="activeUsers"></p>
+                <hr>
+                <div class="user_container"></div>
+            </section>                    
+            
+        </main>
+    <script src="index.js" charset="utf-8"></script>
+    </body>
+</html>

@@ -1,0 +1,156 @@
+
+main{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.column{
+    background-color: goldenrod;
+    height: auto;
+}
+
+.task_header{
+    text-align: center;
+    text-decoration: underline;
+    color: white;
+}
+
+.tasks_wrapper{
+    min-width: 100px;
+    min-height: 100px;
+    background-color: gold;
+}
+
+.task-item{
+    width: auto;
+    height: 100%;
+    margin-top: 5px;
+    margin-left: 70px;
+    margin-right: 70px;
+
+    text-align: center;
+    font-size: 30px;  
+    color: black;
+    text-decoration: none;
+
+    border: 1px solid black;
+    border-radius: 8px;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.task_text{
+    margin: 0;
+    padding: 0;
+}
+
+.task_remove_btn{
+    margin: auto;
+    margin-right: 5px;
+    outline: none;
+    border:none;
+    background-color: transparent;
+}
+
+.task_remove_btn:hover{
+    transform: scale(1.2);
+}
+
+/* ---------------- */
+
+.project_wrapper{
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    border: 2px solid black;
+    text-align: center;
+    padding: 10px;
+    background-color: goldenrod;
+}
+
+.project_link{
+    color: white;
+    text-decoration: none;
+    margin: auto;
+    font-size: 36px;
+    text-decoration: underline;
+}
+
+.edit_btn{
+    border: none;
+    outline: none;
+    border:none;
+    background-color: transparent;
+    padding: 0;
+    color: black;
+}
+
+.edit_btn:hover{
+    color: red;
+}
+
+.progress_wrapper{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    margin: 15px;
+    text-align: center;
+    font-size: 18px;
+
+    position: relative;
+}
+
+.progress_prosent{
+    display: inline;    
+    position: absolute;
+    font-size: 12px;
+    color: black;
+    transform: translate(-50%, -50%);
+    top: 48%;
+    left: 50%;
+}
+
+.progress_wrapper>p{
+    margin: 10px;
+}
+
+.project_progress{
+    grid-column: span 2;
+    text-align: center;
+}   
+
+.task_progressbar {
+    border-radius: 6px; 
+}
+.task_progressbar::-webkit-progress-bar {
+    background-color: white;
+    border-radius: 6px;
+}
+.task_progressbar::-webkit-progress-value {
+    background-color: gold;
+    border-radius: 6px; 
+}
+
+.description{
+    position: relative;
+}
+
+.description_wrapper{
+    display: none;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 60px;
+    left: 200px;
+    
+    border: 1px solid black;
+    padding: 10px;
+}
+
+.description_wrapper>p{
+    margin: 0;
+}
+
+

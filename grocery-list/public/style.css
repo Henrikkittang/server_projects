@@ -1,0 +1,85 @@
+
+
+main{
+    margin-left: auto;
+    margin-right: auto;
+    width: 500px;
+    text-align: center;
+}
+
+#header{
+    text-decoration: underline;
+    font-size: 38px;
+}
+
+/*-----  input section -----*/
+
+.input_section{
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.input_section>input, button{
+    padding: 5px;
+    font-size: 18px;
+    border: 1px grey solid;
+    border-radius: 8px;
+    outline: none;
+}
+
+#name_inp{
+    
+}
+    
+#amount_inp{
+    width: 45px;
+}
+    
+#price_inp{
+    width: 45px;
+}
+
+
+/*-----  grocery list -----*/
+
+.grocery_list{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-left: auto;
+    margin-right: auto;
+    width: 500px;
+    grid-gap: 15px;
+}
+
+.grocery_list>div:nth-child(odd){
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.grocery_list>div:nth-child(even){
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.grocery_list>div{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+    border: black solid 2px;
+    padding: 10px;
+    text-align: center;
+}
+
+.grocery_list>div>h1{
+    padding: 0;
+    margin: auto;
+}
+
+.grocery_list>div>p{
+    font-size: 22px;
+    margin: 0;
+    padding: 0;
+    
+}
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Map</title>
+        <link rel="stylesheet" href="style.css">
+        
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+            integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+            crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+            integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+            crossorigin=""></script>
+        
+        
+    </head>
+    <body>
+        
+        <h1 class="headline"><a href="index.html">This is my beer project</a></h1>
+    
+        <main>
+            <section>
+                <div id="search_wrapper">
+                    <a href="map.html" class="index_btns">Map</a>
+                    <input type="text" id="beer_search_inp">
+                    <button type="button" id="beer_search_btn" class="index_btns">Search</button>    
+                </div>       
+            </section>
+            
+            <section class="map_wrapper">
+                <div class="location_wrapper">
+                    <input type="text" id="location_inp" placeholder="city">
+                    <p>Radius:</p>
+                    <select id="radius_select">
+                        <option value="10">10 km</option>
+                        <option value="25">25 km</option>
+                        <option value="50">50 km</option>
+                        <option value="100">100 km</option>
+                    </select>
+                    <button type="button" id="location_btn">Find breweries</button>  
+                    <p>|</p>
+                    <button type="button" id="zoom_btn">Zoom default</button>      
+                </div>
+                
+                <div>
+                    <div id="checkinMap"></div>
+                </div>
+                
+            </section>        
+        </main>        
+    </body>
+    <script src="scripts/search_bar.js" charset="utf-8"></script>
+    <script src="scripts/map.js" charset="utf-8"></script>
+</html>

@@ -1,0 +1,11 @@
+{
+    "Henrik": {
+        "password": "$2b$10$mUx/6w9iV8HLWcXcfivoXeH9j55ZvaA6pgF2RNi0aJnj8lbF/kiEy",
+        "authenticated": true,
+        "sessionKey": "zsNtsCv0Wu",
+        "rooms": [
+            "o39tIw4g1y"
+        ],
+        "socketID": "HDdyXpZgYCBBm5sMAAAB"
+    }
+}

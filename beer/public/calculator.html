@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Calculator</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        
+        <header>
+            <h1 class="headline"><a href="index.html">This is my beer project</a></h1>
+        
+            <div id="search_wrapper">
+                <a href="map.html" class="index_btns">Map</a>
+                <input type="text" id="beer_search_inp">
+                <button type="button" id="beer_search_btn" class="index_btns">Search</button>    
+            </div>   
+        </header>
+
+                
+        <main class="calculator_main">
+            <section>
+                <h1 class="calculator_headline">How many beers have you been drinking?</h1>
+            </section>
+            
+            <section id="unit_section">
+                <div class="unit_wrapper" value="0">   
+                    <label class="calc_unit_label">Unit:</label>
+                    <input type="number" class="amount_inp" placeholder="How much in liter?">
+                    <input type="number" class="percent_inp" placeholder="How many percent?">
+                    <button class="remove_unit_btn" value="0">Remove</button>
+                </div>
+            </section>
+
+            <section>
+                <p id="calc_result_p"></p>
+            </section>
+
+            <section>
+                <button id="new_unit_btn" class="calculator_btns">New Unit</button>
+                <button id="calculate_btn" class="calculator_btns">Calculate</button>
+            </section>
+        </main>
+                
+    <script src="scripts/search_bar.js" charset="utf-8"></script>
+    <script src="scripts/calculator.js" charset="utf-8"></script>
+    </body>
+</html>

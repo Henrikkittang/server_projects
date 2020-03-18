@@ -1,0 +1,20 @@
+{
+    "name": "beer",
+    "version": "1.0.0",
+    "description": "Inforamtion about beer",
+    "main": "main.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon main.js"
+    },
+    "keywords": [
+        "beer"
+    ],
+    "author": "Henrik Melfald Kittang",
+    "license": "MIT",
+    "dependencies": {
+        "express": "^4.17.1",
+        "node-fetch": "^2.6.0",
+        "nodemon": "^1.19.2"
+    }
+}
