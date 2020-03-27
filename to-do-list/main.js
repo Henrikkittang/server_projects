@@ -90,19 +90,45 @@ app.get('/getProjects', (request, response) => {
 
 app.post('/editProjectName', (request, response) =>{
     data = request.body;
-    const database = readDB();
 
-    console.log(data);
-
-    Object.defineProperty(database, data.newProjectName, 
-        Object.getOwnPropertyDescriptor(database, data.oldProjectName));
-    delete database[data.oldProjectName];
-
-    saveDB(database);
-    response.json({});
+    if(data.oldProjectName && data.newProjectName){
+        const database = readDB();
+        Object.defineProperty(database, data.newProjectName, 
+            Object.getOwnPropertyDescriptor(database, data.oldProjectName));
+        delete database[data.oldProjectName];
+    
+        saveDB(database);
+        response.json({status: 'success', notes: 'projectname changed'});
+    }else{
+        response.json({status: 'okay', notes: 'data missing, nothing changed'});
+    }   
 });
 
 
+app.post('/newProject', (request, response) =>{
+    data = request.body;
+    const database = readDB();
+    
+    if(data.name && data.description){
+        database[data.name] = {
+            "description": data.description,
+            "tasks": []
+        }
+        saveDB(database);
+        response.json({
+            status: 'success', 
+            notes: 'project added',
+            projectName: data.name,
+            tasksDone: 0,
+            taskToDo: 0,
+            totalTasks: 0,
+            description: data.description
+        });
+    }else{
+        response.json({status: 'okay', notes: 'data missing, nothing changed'});
+    }
+
+});
 
 
 

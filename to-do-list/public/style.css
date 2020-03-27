@@ -1,5 +1,11 @@
 
-main{
+
+body{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+
+}
+
+.projects_container, .tasks_container{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px;
@@ -152,5 +158,30 @@ main{
 .description_wrapper>p{
     margin: 0;
 }
+
+/**/
+
+.new_project_section{
+    display: none;
+   
+}
+
+.new_project_wrapper{
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+
+    background-color: chocolate;
+    padding: 10px;
+}
+
+
+
+
 
 

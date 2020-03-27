@@ -14,10 +14,11 @@
     "author": "Henrik Melfald Kittang",
     "license": "MIT",
     "dependencies": {
-        "dotenv": "^8.0.0",
+        "dotenv": "^8.2.0",
         "express": "^4.17.1",
+        "mkdirp": "^1.0.0",
         "nedb": "^1.8.0",
         "node-fetch": "^2.6.0",
-        "nodemon": "^1.19.3"
+        "nodemon": "^2.0.2"
     }
 }

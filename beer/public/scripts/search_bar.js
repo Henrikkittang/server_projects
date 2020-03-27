@@ -7,4 +7,9 @@ beer_search_btn.addEventListener('click', evt =>{
     window.location.href = 'search.html?beer_search=' + beer_name;
 });
 
+beer_search_inp.addEventListener('keyup', evt =>{
+    if(evt.keyCode === 13){
+        beer_search_btn.click();
+    }
+});
 
