@@ -2,6 +2,7 @@
 const new_project_meny = document.querySelector('#new_project_meny');
 const new_project_section = document.querySelector('.new_project_section');
 const new_project_submit = document.querySelector('#new_project_submit');
+const close_new_project = document.querySelector('#close_new_project');
 const projects_container = document.querySelector('.projects_container');
 
 function displayProject(project){
@@ -39,13 +40,16 @@ window.onload = async () =>{
     });
 }
 
-new_project_meny.addEventListener('click', evt =>{
+function toggleNewProjectMeny(evt){
     if(new_project_section.style.display === 'block'){
         new_project_section.style.display = 'none'; 
     }else{
         new_project_section.style.display = 'block'; 
     }
-});
+}
+close_new_project.addEventListener('click', toggleNewProjectMeny);
+new_project_meny.addEventListener('click', toggleNewProjectMeny);
+
 
 new_project_submit.addEventListener('click', async evt =>{
     const data = {
