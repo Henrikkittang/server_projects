@@ -10,7 +10,9 @@
     "post-it"
   ],
   "nodemonConfig": {
-    "ignore": ["data.json"]
+    "ignore": [
+      "data.json"
+    ]
   },
   "author": "Henrik Melfald Kittang",
   "license": "MIT",
