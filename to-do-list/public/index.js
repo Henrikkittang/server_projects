@@ -63,8 +63,12 @@ new_project_submit.addEventListener('click', async evt =>{
         body: JSON.stringify(data)
     });
     const newProjectData = response.json();
-    displayProject(newProjectData);
-
+    if(newProjectData.status === 'success'){
+        displayProject(newProjectData);
+        toggleNewProjectMeny();
+    }else{
+        alert('Fill inn empty field');
+    }
 });
 
 async function editProjectName(evt){
