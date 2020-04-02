@@ -1,6 +1,7 @@
 // imports
 const express = require('express');
 const socket = require('socket.io');
+const { check } = require('express-validator');
 const randomKey = require('random-key');
 const authIO = require('socketio-auth');
 const fs = require('fs');
@@ -14,7 +15,7 @@ app.use(express.static('public'));
 app.use(express.json({limit: '1mb'}));
     
 // Socket setup with socket.io
-numConections = 0
+let numConections = 0
 const io = socket(server);
 
 function authenticate(userInfo) {
@@ -120,24 +121,24 @@ io.on('connection', socket => {
     });        
 
     // Revives messages and send it to the right room
-    socket.on('chat', data => {
-        if(!authenticate(data) || data.message === ''){return}
-        
-        /*if(!(new Database('profiles').mainObject[`${data.username}`].rooms.includes(data.room))){
+    socket.on('chat', () => {} ,data => {
+        if(authenticate(data) || data.message === ''){
+            /*if(!(new Database('profiles').mainObject[`${data.username}`].rooms.includes(data.room))){
             console.log(data.username, 'has not access to room', data.room);
-        }*/
-        
-        delete data.sessionKey;
-        data['timestamp'] = Date.now();
-        
-        const messages = new Database('messages');
-        const key = randomKey.generate(10);
-        
-        messages.mainObject[data.room][`${key}`] = data;
-        messages.save();
-        
-        // Sends the message to the specific room
-        io.sockets.in(data.room).emit('message', data);    
+            }*/
+            
+            delete data.sessionKey;
+            data['timestamp'] = Date.now();
+            
+            const messages = new Database('messages');
+            const key = randomKey.generate(10);
+                    
+            messages.mainObject[data.room][`${key}`] = data;
+            messages.save();
+            
+            // Sends the message to the specific room
+            io.sockets.in(data.room).emit('message', data);    
+        } 
     });
     
     // Adds new room
@@ -214,16 +215,18 @@ io.on('connection', socket => {
 
 });
 
-
 // registers new user
-app.post('/register', async (req, res) => {
-    const newUser = req.body;   // gets the new user info from the client
-    newUser.username = newUser.username.trim();
-    newUser.password_1 = newUser.password_1.trim();
-    newUser.password_2 = newUser.password_2.trim();
-    newUser.username = newUser.username.charAt(0).toUpperCase() + newUser.username.slice(1);
+app.post('/register', [
+    check('username').trim().customSanitizer(value =>{ return value.charAt(0).toUpperCase() + value.slice(1)}).escape(),
+    check('password_1').trim().escape(),
+    check('password_2').trim().escape()
+], async (req, res) => {
+    const newUser = req.body;   // gets the new user info from the client    
     const key = newUser.username;
     
+    console.log(newUser.username);
+    
+
     const profiles = new Database('profiles');
     const user = profiles.find(key);
     
@@ -232,7 +235,12 @@ app.post('/register', async (req, res) => {
         res.json({status:'failed', details:'blank not allowed'});
         return;
     }
-    
+
+    if(newUser.username.length > 16){
+        res.json({status: 'failed', details:'username to long'});
+        return;
+    }
+
     // if the username is already taken, error
     if(user){
         res.json({status: 'failed', details:'username taken'});
@@ -272,7 +280,11 @@ app.post('/register', async (req, res) => {
 });
 
 // login for registered users
-app.post('/login', async (req, res) => {
+app.post('/login', [
+    check('username').trim().customSanitizer(value =>{ return value.charAt(0).toUpperCase() + value.slice(1)}).escape(),
+    check('password_1').trim().escape(),
+    check('password_2').trim().escape()
+], async (req, res) => {
     const data = req.body;    // gets the new user info from the client
     data.username = data.username.trim();
     data.username = data.username.charAt(0).toUpperCase() + data.username.slice(1);
@@ -296,7 +308,6 @@ app.post('/login', async (req, res) => {
             profiles.save();
             
             return;
-
         }
         
         // else return error saying password didnt match
