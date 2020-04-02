@@ -70,11 +70,29 @@ body{
 
 .project_wrapper{
     display: grid;
+    position: relative;
     grid-template-columns: repeat(1, 1fr);
     border: 2px solid black;
     text-align: center;
     padding: 10px;
     background-color: goldenrod;
+}
+
+.delete_project_btn{
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0;
+    text-align: center;
+    border: none;
+    background-color: transparent;
+    outline: none;
+}
+
+.delete_project_btn:hover{
+    transform: scale(1.1);
 }
 
 .project_link{
@@ -209,7 +227,7 @@ body{
     height: 25px;
     position: absolute;
     top: 0;
-    left: 0%;
+    left: 0;
     background-color: transparent;
     border: none;
     outline: none;

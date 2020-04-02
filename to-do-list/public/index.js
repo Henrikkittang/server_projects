@@ -5,17 +5,21 @@ const new_project_submit = document.querySelector('#new_project_submit');
 const close_new_project = document.querySelector('#close_new_project');
 const projects_container = document.querySelector('.projects_container');
 
+
 function displayProject(project){
     const progress = Math.round(project.tasksDone / project.totalTasks * 100) | 0;
     projects_container.innerHTML += `
-        <div class="project_wrapper">
+        <div class="project_wrapper" id="${project.projectName.replace(/\s/g, '')}">
+            <div class="delete_project_wrapper">
+                <button class="delete_project_btn" onclick="deleteProject('${project.projectName}')">❌</button>
+            </div>
             <div>
                 <a class="project_link" href="project.html?projectName=${project.projectName}">${project.projectName}</a>
                 <button class="edit_btn" onclick="editProjectName(event)"> <i class='fas'>&#xf044;</i> </button>
             </div>
             <div class="progress_wrapper">
-                <p>Done: ${project.tasksDone} </p>
                 <p>To do: ${project.taskToDo} </p>
+                <p>Done: ${project.tasksDone} </p>
                 <div class="project_progress">
                     <progress max="${project.totalTasks}" value="${project.tasksDone}" class="task_progressbar"></progress>
                     <p class="progress_prosent">${progress}%</p>    
@@ -29,6 +33,24 @@ function displayProject(project){
             </div>
         </div>
     `
+}
+
+async function deleteProject(projectName){    
+    const check = prompt('Are you sure yo want to delete this project? (yes/no)')
+
+    if(check == 'yes'){
+        const response = await fetch('/deleteProject', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({projectName: projectName})
+        });
+        const status = await response.json();
+        if(status.status == 'success'){
+            let projectId = '#' + projectName.replace(/\s/g, '');
+            const project = document.querySelector(projectId);
+            project.parentNode.removeChild(project);
+        }
+    }
 }
 
 window.onload = async () =>{
@@ -62,7 +84,7 @@ new_project_submit.addEventListener('click', async evt =>{
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     });
-    const newProjectData = response.json();
+    const newProjectData = await response.json();
     if(newProjectData.status === 'success'){
         displayProject(newProjectData);
         toggleNewProjectMeny();

@@ -131,7 +131,17 @@ app.post('/newProject', (request, response) =>{
 });
 
 
+app.post('/deleteProject', (request, response) =>{
+    const data = request.body;
 
+    const database = readDB();
+    if(data.projectName in database){
+        delete database[data.projectName];
+    }
+    saveDB(database);
+    response.json({status: 'success'});
+
+});
 
 
 
