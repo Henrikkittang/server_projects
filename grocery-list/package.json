@@ -17,7 +17,7 @@
     "dependencies": {
         "express": "^4.17.1",
         "fs": "0.0.1-security",
-        "nodemon": "^1.19.4",
+        "nodemon": "^2.0.2",
         "random-key": "^0.3.2"
     }
 }
