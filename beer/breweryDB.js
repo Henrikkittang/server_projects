@@ -1,54 +1,51 @@
-
 const fetch = require('node-fetch');
-let apiKey;
 
-function parseParams(params){
-    let string = '';
-    Object.keys(params).forEach(key =>{
-        string += `&${key}=${params[key]}`;
-    });
-    return string;
-}
-
-async function returnResult(endpoint, params){
-    const parsedParams = parseParams(params) + `&key=${apiKey}`;
-    const url = 'https://sandbox-api.brewerydb.com/v2' + endpoint + parsedParams
-    const response = await fetch(url);
-    const json = await response.json();
-    return json;
-}
-
-
-class main {
+class BeerDatabase{
     constructor(key) {
-        apiKey = key;
-        this.beer = new beer();
-        this.brewery = new brewery();
+        this.apiKey = key;
+    }
+
+    parseParams(params){
+        let string = '';
+        Object.keys(params).forEach(key => string += `&${key}=${params[key]}` );
+        return string;
+    }
+
+    async returnResult(endpoint, params){
+        const parsedParams = this.parseParams(params) + `&key=${this.apiKey}`;
+        const url = 'https://sandbox-api.brewerydb.com/v2' + endpoint + parsedParams
+        const response = await fetch(url);
+        return await response.json();
     }
 }
 
-class beer {
-    constructor() {}
+class Beer extends BeerDatabase{
+    constructor(apiKey) {
+        super(apiKey);
+    }
     
     getById(id, params={}){
         const ids = [].concat(id || []);
         const endpoint = `/beers/?ids=${ids}`;
-        return returnResult(endpoint, params);
+        return this.returnResult(endpoint, params);
     }
     
     find(name, params={}){
         const endpoint = `/search?q=${name}&type=beer`;
-        return returnResult(endpoint, params);
+        return this.returnResult(endpoint, params);
     }
 }
 
-class brewery {
-    constructor() {}
-    
+class Brewery extends BeerDatabase{
+    constructor(apiKey) {
+        super(apiKey);
+    }
+
     getByCoors(latlon, params={}){
         const endpoint = `/search/geo/point/?lat=${latlon[0]}&lng=${latlon[1]}`
-        return returnResult(endpoint, params);
+        return this.returnResult(endpoint, params);
     }
 }
 
-module.exports = main;
+module.exports = {Beer, Brewery};
+
