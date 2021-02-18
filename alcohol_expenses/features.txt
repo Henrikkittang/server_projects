@@ -1,0 +1,18 @@
+
+Grunnlegende  
+    - Totalt penger brukt X  
+    - Totalt konsumert, antall øl/liter 100%   X
+
+Nødvendig 
+    - Skifte dato for å legge til for senere X
+
+Fancy-smancy
+    - Velge drikke fra en liste, autofyll noen felter med rikitg info
+    - Kunne spore enkelte enheter
+
+
+Statistikk
+    - Månedlig oversikt, helst et fint linjediagram
+    - Vanligste enheter, helst et fint kakediagram
+    - Oversikt over loggføringer, en enkel scorllbar liste
+

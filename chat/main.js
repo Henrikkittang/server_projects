@@ -16,7 +16,7 @@ app.use(express.json({limit: '1mb'}));
     
 // Socket setup with socket.io
 let numConections = 0
-const io = socket(server);
+const io = socket(server, {secure: true});
 
 function authenticate(userInfo) {
     const key = userInfo.username;
@@ -93,6 +93,7 @@ authIO(io, {
             
 users = {}
 
+
 io.on('connection', socket => {
     // Runs on each new connection. Updates the socket count on all screens
     // and logs the new connection to the server
@@ -121,9 +122,9 @@ io.on('connection', socket => {
     });        
 
     // Revives messages and send it to the right room
-    socket.on('chat', () => {} ,data => {
-        if(authenticate(data) || data.message === ''){
-            /*if(!(new Database('profiles').mainObject[`${data.username}`].rooms.includes(data.room))){
+    socket.on('chat', data => {
+        if(authenticate(data) && data.message != ''){
+             /*if(!(new Database('profiles').mainObject[`${data.username}`].rooms.includes(data.room))){
             console.log(data.username, 'has not access to room', data.room);
             }*/
             
@@ -138,7 +139,7 @@ io.on('connection', socket => {
             
             // Sends the message to the specific room
             io.sockets.in(data.room).emit('message', data);    
-        } 
+        }
     });
     
     // Adds new room

@@ -1,0 +1,117 @@
+
+body{
+    text-align: center;
+    font-family: Georgia;
+}
+
+/* 
+-------------
+    Header 
+-------------
+*/
+
+.calculator_main{
+    background-color: brown;
+
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+
+    width: 900px;
+    height: auto;
+    padding-bottom: 20px;
+
+    border: 2px solid black;
+    border-radius: 8px; 
+}
+
+.calculator_main>section{
+    margin: 10px;
+}
+
+.calculator_headline{
+    font-size: 26px;
+    color: goldenrod;
+}
+
+#date_section>input{
+    outline: none;
+    padding: 1px;
+    font-size: 18px;
+    border: 1px solid black;
+    border-radius: 4px; 
+}
+
+.calc_unit_label{
+    color:black;
+    font-size: 18px;
+}
+
+.unit_wrapper>input{
+    outline: none;
+    padding: 4px;
+    font-size: 18px;
+    border: 1px solid black;
+    border-radius: 4px; 
+    width: 150px;
+}
+
+.calculator_btns{
+    outline: none;
+    padding: 4px;
+    color: white;
+    border: 1px solid black;
+    font-size: 18px;
+    border-radius: 4px;
+    background-color: goldenrod;
+    text-decoration: none;
+}
+
+#calc_result_p{
+    font-size: 18px;
+    color: white;
+}
+
+.calculator_btns:hover{
+    text-decoration: underline;
+}
+
+/* 
+-------------
+    Main 
+-------------
+*/
+
+/* Basic stats */
+
+#basic_stats{
+    background-color: brown;
+
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+
+    width: 900px;
+    height: auto;
+    padding-bottom: 20px;
+
+    border: 2px solid black;
+    border-radius: 8px; 
+}
+
+#basic_stats>div>p{
+    color: ghostwhite;
+    font-size: 20px;
+    width: auto;
+
+}
+
+
+#basic_stats>h1{
+    color: goldenrod;
+    font-size: 30px;
+    text-decoration: underline;
+}
+
+
+
