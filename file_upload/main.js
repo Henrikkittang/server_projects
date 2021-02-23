@@ -10,7 +10,7 @@ app.use(express.json({limit: '10mb'}));
 
 console.log('myspace cat');
 
-git_update.enableAuotmaticUpdate('https://github.com/Henrikkittang/server_projects')
+git_update.enableAuotmaticUpdate('https://github.com/Henrikkittang/server_projects/tree/master/file_upload.git')
 
 app.post('/file', (request, response) =>{
     console.log('Got data');
