@@ -9,14 +9,15 @@ class Logger{
             fileWrite: options.fileWrite || true,
             rootDirectory: options.rootDirectory || './logs'
         };
+        console.log(this.options);
     }
 
     _writeFile(message){
-        const date = new Date();
+        const date = new Date().toString();
        
-        const month = date.toString().substring(4, 7);
-        const day = date.toString().substring(7, 10);
-        const timeString = date.toString().substring(16, 24);
+        const month = date.substring(4, 7);
+        const day = date.substring(8, 10);
+        const timeString = date.substring(16, 24);
         const rootDir = this.options.rootDirectory;
 
         const path = `${rootDir}/${month}/${day}.log`;
