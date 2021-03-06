@@ -4,7 +4,6 @@ const socket = require('socket.io');
 const { check } = require('express-validator');
 const randomKey = require('random-key');
 const authIO = require('socketio-auth');
-const fs = require('fs');
 const Database = require('./dbManager.js');
 const bcrypt = require('bcrypt');
 
@@ -215,7 +214,7 @@ io.on('connection', socket => {
     });
 
 });
-
+    
 // registers new user
 app.post('/register', [
     check('username').trim().customSanitizer(value =>{ return value.charAt(0).toUpperCase() + value.slice(1)}).escape(),

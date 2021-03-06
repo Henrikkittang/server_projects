@@ -1,0 +1,261 @@
+
+
+body{
+    font-family: Georgia;
+}
+
+
+.index_main{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 15px;
+}
+
+.room_list{
+    background-color: white;
+    border: 1px solid lightgrey;
+    width: auto;
+}
+
+.new_rom_wrapper{
+    padding: 18px;
+    padding-top: 5px;
+    border-bottom: solid grey 1px;
+    text-align: center;
+}
+
+
+.room_btn_wrapper>button{
+    padding: 5px;
+    height: 50px;
+    width: 100%;
+    font-size: 18px;
+    background: white;
+    border: none;
+    border-bottom: black solid 1px;
+    outline: none;
+}
+
+.room_btn_wrapper>button:active{
+    background-color: #F0F0F0;
+}
+
+.room_btn_wrapper>button:hover{
+    text-decoration: underline;
+}
+
+
+.room_settings{
+    background-color: white;
+    padding: 20px;
+    padding-top: 5px;
+    outline: 1px solid lightgrey;
+    width: auto;
+}
+
+#room_members_wrapper>div{
+    margin-bottom: 10px;
+}
+
+#room_members_wrapper>div>p{
+    display: inline;
+    margin-right: 10px;
+}
+
+
+.user_wrapper{
+    background-color: white;
+    padding: 20px;
+    padding-top: 5px;
+    border: 1px solid lightgrey;
+    width: auto;
+}
+
+.user_container>p{
+    border: 1px solid lightgrey;
+    border-bottom: none;
+    padding: 5px;
+    font-size: 18px;
+    margin: 0;
+}
+
+.user_container>p:last-of-type{
+    border: 1px solid lightgrey;
+}
+
+.main_window{
+    border: solid black 2px;
+    width: 700px;
+}
+
+.main_window>h1{
+    border-bottom: solid black 2px;
+    text-align: center;
+    margin: 0;
+    padding: 10px;
+}
+
+.messages_wrapper{
+    overflow-y: scroll; 
+    height:350px;
+    width: auto;
+    padding: 10px;
+}
+
+.input_wrapper{
+    background-color: lightgrey;
+}
+
+.input_wrapper>input{
+    width: 690px;
+    height: 30px;
+    font-size: 16px;
+    margin-top: 1px;
+    outline: none;
+    border: none;
+    padding: 5px;
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.inputfile + .inputfile_label {
+    display: inline-block;
+    font-size: 20px;
+    color: white;
+    background-color: orange;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.inputfile:focus + .inputfile_label, .inputfile + .inputfile_label:hover {
+    background-color: red;
+}
+
+
+.messagesContainer{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 20px;
+}
+
+.messagesContainer>div{
+    padding: 10px;
+    font-size: 18px;
+}
+
+.myMessages{
+    margin-left: auto;
+    max-width: 400px;
+}
+
+.othersMessages{
+    margin-right: auto;
+    max-width: 400px;
+}
+
+.messagesContainer>div>a{
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+}
+
+.messagesContainer>div>p{
+    margin: 0;
+    text-align: center;
+}
+
+.messagesContainer>div>img{
+    max-width: 200px;
+    max-height: 200px;
+    border: 2px solid black;
+    background-color: inherit;
+}
+
+.mainMessage_username{
+    font-weight: bold;
+}
+
+.mainMessage_username, .mainMessage_date{
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.mainMessage{
+    background-color: #094AD6   ;
+    color: white;
+    padding: 10px;
+    border-radius: 16px;
+}
+
+.broadcaster{
+    color: grey;
+    font-weight: 100;
+}
+
+/* LOGIN */
+
+.login_body{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    background-color: lightblue;
+    width: 400px;
+}
+
+.login_mainform{
+    background-color: white;
+    padding: 20px;
+    border: 4px solid #6BABFF;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.register, .login{
+    padding-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 10px;
+}
+
+.register>input, .login>input{
+    background-color: #F7F7F7;
+    padding: 6px;
+    outline: none;
+    border: 1px solid lightgrey;
+    border-radius: 2px;
+}
+
+.register>button, .login>button{
+    background-color: #25C62A;
+    border: 0.5px solid black;
+    width: 90px;
+    padding: 5px;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    outline: none;
+}
+
+.register>button:active, .login>button:active{
+    background-color: #5DFE62;
+}
+
+
+
+/**/
