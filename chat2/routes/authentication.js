@@ -13,7 +13,6 @@ module.exports = (app, profiles) => {
     }
 
     app.get('/', checkAuthenticated, (request, response) => { 
-        console.log('got request for index.html');
         response.sendFile('/public/index.html', {root: __dirname + '/..'});
     }); 
     
@@ -44,7 +43,6 @@ module.exports = (app, profiles) => {
         successRedirect: '/',
         failureRedirect: '/login',
     }));
-
 
     app.post('/logout', (request, response) => {
         console.log(`logout ${request.session.id}`);

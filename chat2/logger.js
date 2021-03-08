@@ -4,12 +4,12 @@ const fs = require('fs');
 class Logger{
     constructor(options={}){
         this.options = {
-            printDebug: options.printDebug || false,
-            printMode: options.printMode || false,
-            fileWrite: options.fileWrite || true,
-            rootDirectory: options.rootDirectory || './logs'
+            printDebug: false,
+            printMode: false,
+            fileWrite: true,
+            rootDirectory: './logs'
         };
-        console.log(this.options);
+        Object.assign(this.options, options)
     }
 
     _writeFile(message){

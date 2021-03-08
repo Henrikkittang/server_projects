@@ -25,7 +25,7 @@ body{
 }
 
 
-.room_btn_wrapper>button{
+#room_btn_wrapper>button{
     padding: 5px;
     height: 50px;
     width: 100%;
@@ -36,11 +36,11 @@ body{
     outline: none;
 }
 
-.room_btn_wrapper>button:active{
+#room_btn_wrapper>button:active{
     background-color: #F0F0F0;
 }
 
-.room_btn_wrapper>button:hover{
+#room_btn_wrapper>button:hover{
     text-decoration: underline;
 }
 

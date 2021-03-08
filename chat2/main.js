@@ -11,7 +11,7 @@ const passport      = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const Logger        = require('./logger');
 
-const myLogger = new Logger({fileWrite:false, printMode:true, printDebug:true});
+const myLogger = new Logger({printDebug:true, fileWrite: false, printMode: true});
 myLogger.info('Server stared');
 
 const app = express();
@@ -78,7 +78,16 @@ const databaseConfig = {
 
 const profiles = new Datastore({filename: 'database/profiles.db', autoload: true});
 const messages = new Datastore({filename: 'database/messages.db', autoload: true});
+const rooms = new Datastore({filename: 'database/rooms.db', autoload: true});
 
+/*
+User should only be able to edit his own profile
+
+room
+    - name
+    - messages
+    - users 
+*/
 
 require('./routes')(app, profiles);
 
@@ -99,7 +108,12 @@ io.on('connection', socket =>{
     session.socketId = socket.id;
     session.save();
     myLogger.debug(`'${socket.request.user.username}' connected with socket id ${socket.id} in session ${session.id}`);
+    myLogger.info(`'${socket.request.user.username}' connected with socket id ${socket.id} in session ${session.id}`);
 
+    rooms.find({users: [socket.request.user.id]}, (err, roomsDoc)=>{
+        if(err) myLogger.error(err);
+        io.to(socket.id).emit('roomsUpdate', roomsDoc);
+    });
 
     messages.find({}, (err, docs) =>{
         if(err) myLogger.error(err)
@@ -107,11 +121,37 @@ io.on('connection', socket =>{
     });
 
     socket.on('disconnect', () => {
-        console.log(`Disconnected from socket ${socket.id}.`);
+        myLogger.info(`'${socket.request.user.username}' disconnected from socket with id ${socket.id} in session ${session.id}`);
+        myLogger.debug(`'${socket.request.user.username}' disconnected from socket with id ${socket.id} in session ${session.id}`);
+    });
+
+    socket.on('newRoom', data => {
+        // NB: sanetize data
+        myLogger.debug(`New room '${data.name}' created by '${socket.request.user.username}'`);
+
+        const profileId = socket.request.user.id;
+        const newRoom = {
+            name: data.name,
+            messages: [],
+            users: [profileId]
+        };
+ 
+        rooms.insert(newRoom, (err, roomDoc) => {
+            if(err) myLogger.error(err);
+            socket.join(roomDoc._id);
+        });
+
+        rooms.find({users: [profileId]}, (err, roomsDoc)=>{
+            if(err) myLogger.error(err);
+            io.to(socket.id).emit('roomsUpdate', roomsDoc);
+        });
+        
     });
 
     socket.on('message', data =>{
         // NB: sanetize data
+        // NB: Check if socket/user has access to requested room
+        myLogger.debug(`'${socket.request.user.username}' sent message`)
 
         const username = socket.request.user.username;
         const newMessage = {
@@ -132,7 +172,7 @@ io.on('connection', socket =>{
         });
 
         messages.find({}, (err, docs) =>{
-            if(err) myLogger.error(err)
+            if(err) myLogger.error(err);
             io.emit('recive', docs);
         });
     });

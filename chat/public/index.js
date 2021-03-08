@@ -154,7 +154,7 @@ socket.on('connect', data =>{
         socket.on('message', data => {
             appendMessage(data);
         });
-        
+            
         socket.on('typing', data => {
             broadcaster.textContent = data + ' is typing...';
             messages_wrapper.scrollTop = messages_wrapper.scrollHeight;
@@ -218,7 +218,6 @@ socket.on('connect', data =>{
                 socket.emit('subscribe', current_room);
             }
         });
-        
     });
 });
 

@@ -32,6 +32,8 @@ function appendMessage(data) {
 
 
 
+let roomId;
+
 const socket = io.connect({
     auth: { token: `Bearer ${localStorage.getItem('jwt')}` }
 });
@@ -51,8 +53,30 @@ socket.on('connect', data => {
 
             socket.emit('message', {
                 message: message_inp.value,
+                roomId: roomId
             });
         }        
+    });
+
+    room_btn.addEventListener('click', () => {
+        const roomName = document.querySelector('#room_inp').value;
+        socket.emit('newRoom', {name: roomName});
+    });
+
+    socket.on('roomsUpdate', data => {
+        console.log(data);
+        const room_btn_wrapper = document.querySelector('#room_btn_wrapper');
+        room_btn_wrapper.innerHTML = '';
+        data.forEach(room => {
+            const newBtn = document.createElement('button');
+            newBtn.textContent = room.name;
+            newBtn.value = room.id;
+            newBtn.addEventListener('click', evt =>{
+                roomId = room.id;
+                document.querySelector('#chat_header').textContent = evt.target.textContent;
+            });
+            room_btn_wrapper.append(newBtn);
+        });
     });
 
     socket.on('recive', data => {
@@ -68,8 +92,6 @@ socket.on('connect', data => {
         if(err.message === 'Token no longer valid'){
             
         }
-
-
         console.log(err instanceof Error); // true
         console.log(err.message); // not authorized
         console.log(err.data); // { content: "Please retry later" }        
