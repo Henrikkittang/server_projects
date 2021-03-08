@@ -64,24 +64,25 @@ socket.on('connect', data => {
     });
 
     socket.on('roomsUpdate', data => {
-        console.log(data);
         const room_btn_wrapper = document.querySelector('#room_btn_wrapper');
         room_btn_wrapper.innerHTML = '';
         data.forEach(room => {
             const newBtn = document.createElement('button');
             newBtn.textContent = room.name;
-            newBtn.value = room.id;
+            newBtn.value = room._id;
             newBtn.addEventListener('click', evt =>{
-                roomId = room.id;
+                roomId = evt.target.value;
                 document.querySelector('#chat_header').textContent = evt.target.textContent;
+                socket.emit('getRoomMessages', {roomId: evt.target.value});
             });
             room_btn_wrapper.append(newBtn);
         });
     });
 
-    socket.on('recive', data => {
+    socket.on('reciveMessages', data => {
         const messagesContainer = document.querySelector('.messagesContainer');
         messagesContainer.innerHTML = '';
+        console.log(data);
         data.sort((a, b) => { return a.timestamp - b.timestamp })
         data.forEach(element => {
             appendMessage(element);

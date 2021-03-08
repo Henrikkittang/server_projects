@@ -10,8 +10,9 @@ const bodyParser    = require("body-parser");
 const passport      = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const Logger        = require('./logger');
+const { resolve } = require('path');
 
-const myLogger = new Logger({printDebug:true, fileWrite: false, printMode: true});
+const myLogger = new Logger({printDebug:true, fileWrite: false, printMode: false});
 myLogger.info('Server stared');
 
 const app = express();
@@ -80,6 +81,7 @@ const profiles = new Datastore({filename: 'database/profiles.db', autoload: true
 const messages = new Datastore({filename: 'database/messages.db', autoload: true});
 const rooms = new Datastore({filename: 'database/rooms.db', autoload: true});
 
+
 /*
 User should only be able to edit his own profile
 
@@ -91,6 +93,18 @@ room
 
 require('./routes')(app, profiles);
 
+function emitRoomMessages(roomId){
+    rooms.findOne({_id: roomId}, (err, roomDoc) =>{
+        if(err) myLogger.error(err);
+
+        const query = roomDoc.messages.map(_roomId => {return {_id: _roomId}});
+
+        messages.find({$or: query}, (err, messageDoc) =>{
+            if(err) myLogger.error(err);
+            io.emit('reciveMessages', messageDoc);
+        });     
+    });
+}
 
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 io.use(wrap(sessionMiddleware));
@@ -113,11 +127,6 @@ io.on('connection', socket =>{
     rooms.find({users: [socket.request.user.id]}, (err, roomsDoc)=>{
         if(err) myLogger.error(err);
         io.to(socket.id).emit('roomsUpdate', roomsDoc);
-    });
-
-    messages.find({}, (err, docs) =>{
-        if(err) myLogger.error(err)
-        socket.emit('recive', docs);
     });
 
     socket.on('disconnect', () => {
@@ -145,36 +154,39 @@ io.on('connection', socket =>{
             if(err) myLogger.error(err);
             io.to(socket.id).emit('roomsUpdate', roomsDoc);
         });
-        
+    });
+
+    socket.on('getRoomMessages', data => {
+        // NB: sanetize data
+        emitRoomMessages(data.roomId);
     });
 
     socket.on('message', data =>{
         // NB: sanetize data
         // NB: Check if socket/user has access to requested room
-        myLogger.debug(`'${socket.request.user.username}' sent message`)
+        myLogger.debug(`'${socket.request.user.username}' sent message to room ${data.roomId}`)
 
         const username = socket.request.user.username;
+        const profileId = socket.request.user.id;
         const newMessage = {
             username: username,
+            profileId: profileId,
             message: data.message,
             timestamp: Date.now()
         }
  
         messages.insert(newMessage, (err, messageDoc) => {
-            if(err) myLogger.error(err)
-            const docId = socket.request.user.id;
-            profiles.findOne({_id: docId}, (err, profileDoc) =>{
-                if(!profileDoc)
-                    myLogger.error('User id not regonized on message event');
+            if(err) myLogger.error(err);
+            rooms.findOne({_id: data.roomId}, (err, roomDoc) =>{
+                if(err) myLogger.error(err);
+                if(!roomDoc)
+                    myLogger.error('Room id not regonized on message event');
                 else
-                    profiles.update({ _id: profileDoc._id}, { $push: {messages: messageDoc._id}});    
+                    rooms.update({ _id: roomDoc._id}, { $push: {messages: messageDoc._id}});    
             });
         });
 
-        messages.find({}, (err, docs) =>{
-            if(err) myLogger.error(err);
-            io.emit('recive', docs);
-        });
+        emitRoomMessages(data.roomId);
     });
 });
 
