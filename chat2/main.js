@@ -6,11 +6,9 @@ const Datastore     = require('nedb');
 const bcrypt        = require('bcrypt');
 const crypto        = require('crypto');
 const session       = require("express-session");
-const bodyParser    = require("body-parser");
 const passport      = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const Logger        = require('./logger');
-const { resolve } = require('path');
 
 const myLogger = new Logger({printDebug:true, fileWrite: false, printMode: false});
 myLogger.info('Server stared');
@@ -22,7 +20,6 @@ const io = socketio(server)
 const sessionMiddleware = session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false });
  
 app.use(sessionMiddleware);
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json({limit: '2mb'}));
@@ -101,8 +98,15 @@ function emitRoomMessages(roomId){
 
         messages.find({$or: query}, (err, messageDoc) =>{
             if(err) myLogger.error(err);
-            io.emit('reciveMessages', messageDoc);
-        });     
+            io.to(roomId).emit('reciveMessages', messageDoc);
+        });
+    });
+}
+
+function emitRoomUpdate(profileId, socketId){
+    rooms.find({users: { $in: [profileId]}}, (err, roomsDoc)=>{
+        if(err) myLogger.error(err);
+        io.to(socketId).emit('roomsUpdate', roomsDoc);
     });
 }
 
@@ -124,11 +128,8 @@ io.on('connection', socket =>{
     myLogger.debug(`'${socket.request.user.username}' connected with socket id ${socket.id} in session ${session.id}`);
     myLogger.info(`'${socket.request.user.username}' connected with socket id ${socket.id} in session ${session.id}`);
 
-    rooms.find({users: [socket.request.user.id]}, (err, roomsDoc)=>{
-        if(err) myLogger.error(err);
-        io.to(socket.id).emit('roomsUpdate', roomsDoc);
-    });
-
+    emitRoomUpdate(socket.request.user.id, socket.id);
+    
     socket.on('disconnect', () => {
         myLogger.info(`'${socket.request.user.username}' disconnected from socket with id ${socket.id} in session ${session.id}`);
         myLogger.debug(`'${socket.request.user.username}' disconnected from socket with id ${socket.id} in session ${session.id}`);
@@ -136,11 +137,11 @@ io.on('connection', socket =>{
 
     socket.on('newRoom', data => {
         // NB: sanetize data
-        myLogger.debug(`New room '${data.name}' created by '${socket.request.user.username}'`);
+        myLogger.debug(`New room '${data.roomName}' created by '${socket.request.user.username}'`);
 
         const profileId = socket.request.user.id;
         const newRoom = {
-            name: data.name,
+            name: data.roomName,
             messages: [],
             users: [profileId]
         };
@@ -150,18 +151,32 @@ io.on('connection', socket =>{
             socket.join(roomDoc._id);
         });
 
-        rooms.find({users: [profileId]}, (err, roomsDoc)=>{
+        emitRoomUpdate(profileId, socket.id);
+
+    });
+
+    socket.on('addUserToRoom', data => {
+        // NB: sanetize data
+        // NB: Check if socket/user has access to requested room
+
+        myLogger.debug('Trying to add user to room');
+
+        profiles.findOne({email: data.email}, (err, profileDoc) =>{
             if(err) myLogger.error(err);
-            io.to(socket.id).emit('roomsUpdate', roomsDoc);
+            if(profileDoc){
+                rooms.update({ _id: data.roomId}, { $push: {users: profileDoc._id}});
+                emitRoomUpdate(profileDoc._id, socket.id);
+            }
         });
     });
 
     socket.on('getRoomMessages', data => {
         // NB: sanetize data
+        // NB: Check if socket/user has access to requested room
         emitRoomMessages(data.roomId);
     });
 
-    socket.on('message', data =>{
+    socket.on('message', async data =>{
         // NB: sanetize data
         // NB: Check if socket/user has access to requested room
         myLogger.debug(`'${socket.request.user.username}' sent message to room ${data.roomId}`)
@@ -183,10 +198,10 @@ io.on('connection', socket =>{
                     myLogger.error('Room id not regonized on message event');
                 else
                     rooms.update({ _id: roomDoc._id}, { $push: {messages: messageDoc._id}});    
+                emitRoomMessages(data.roomId);
             });
         });
 
-        emitRoomMessages(data.roomId);
     });
 });
 

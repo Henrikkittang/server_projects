@@ -1,5 +1,6 @@
 
 const message_inp = document.querySelector('#message_inp');
+const new_user_btn = document.querySelector('#new_user_btn');
 
 function appendMessage(data) {
     const messagesContainer = document.querySelector('.messagesContainer');    
@@ -31,9 +32,6 @@ function appendMessage(data) {
 }
 
 
-
-let roomId;
-
 const socket = io.connect({
     auth: { token: `Bearer ${localStorage.getItem('jwt')}` }
 });
@@ -53,14 +51,22 @@ socket.on('connect', data => {
 
             socket.emit('message', {
                 message: message_inp.value,
-                roomId: roomId
+                roomId: sessionStorage.getItem('currentRoomId')
             });
         }        
     });
 
+    new_user_btn.addEventListener('click', () => {
+        const new_user_inp = document.querySelector('#new_user_inp');
+        socket.emit('addUserToRoom', {
+            email: new_user_inp.value, 
+            roomId: sessionStorage.getItem('currentRoomId')
+        });
+    });
+
     room_btn.addEventListener('click', () => {
-        const roomName = document.querySelector('#room_inp').value;
-        socket.emit('newRoom', {name: roomName});
+        const room_inp = document.querySelector('#room_inp');
+        socket.emit('newRoom', {roomName: room_inp.value});
     });
 
     socket.on('roomsUpdate', data => {
@@ -71,7 +77,7 @@ socket.on('connect', data => {
             newBtn.textContent = room.name;
             newBtn.value = room._id;
             newBtn.addEventListener('click', evt =>{
-                roomId = evt.target.value;
+                sessionStorage.setItem('currentRoomId', evt.target.value);
                 document.querySelector('#chat_header').textContent = evt.target.textContent;
                 socket.emit('getRoomMessages', {roomId: evt.target.value});
             });
