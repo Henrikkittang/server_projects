@@ -2,16 +2,15 @@
 const express       = require('express');
 const http          = require('http')
 const socketio      = require('socket.io');
-const Datastore     = require('nedb');
 const bcrypt        = require('bcrypt');
 const crypto        = require('crypto');
 const session       = require("express-session");
-const passport      = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
+const passport      = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const Datastore     = require('./nedb_wrapper');
 const Logger        = require('./logger');
 
 const myLogger = new Logger({printDebug:true, fileWrite: false, printMode: false});
-myLogger.info('Server stared');
 
 const app = express();
 const server = http.createServer(app);
@@ -25,26 +24,26 @@ app.use(passport.session());
 app.use(express.json({limit: '2mb'}));
 
 passport.use(
-    new LocalStrategy({usernameField : 'email'}, (email, password, done) => {
-        profiles.findOne({email: email}, async (err, profileDoc) =>{
-            if(profileDoc){
-                const result = await bcrypt.compare( password, profileDoc.password );
-                const user = {username: profileDoc.username, id: profileDoc._id};
-                return done(null, result ? user : false);             
-            }else{
-                return done(null, false);
-            }
-        });
+    new LocalStrategy({usernameField : 'email'}, async (email, password, done) => {
+
+        const profileDoc = await profiles.findOne({email: email});
+
+        if(profileDoc){
+            const result = await bcrypt.compare( password, profileDoc.password );
+            const user = {username: profileDoc.username, id: profileDoc._id};
+            return done(null, result ? user : false);             
+        }else{
+            return done(null, false);
+        }
     })
 );
 
 passport.serializeUser((user, done) => {
     done(null, user.id)
 });
-passport.deserializeUser((id, done) => {
-    profiles.findOne({_id: id}, (err, profile) => {
-        done(null, {username: profile.username, id: profile._id});    
-    }); 
+passport.deserializeUser(async (id, done) => {
+    const profile = await profiles.findOne({_id: id});
+    done(null, {username: profile.username, id: profile._id});    
 });
   
 
@@ -90,24 +89,27 @@ room
 
 require('./routes')(app, profiles);
 
-function emitRoomMessages(roomId){
-    rooms.findOne({_id: roomId}, (err, roomDoc) =>{
-        if(err) myLogger.error(err);
 
-        const query = roomDoc.messages.map(_roomId => {return {_id: _roomId}});
+async function emitRoomMessages(roomId){
+    const roomDoc = await rooms.findOne({_id: roomId});
 
-        messages.find({$or: query}, (err, messageDoc) =>{
-            if(err) myLogger.error(err);
-            io.to(roomId).emit('reciveMessages', messageDoc);
-        });
+    const messageQuery = roomDoc.messages.map(_roomId => {return {_id: _roomId}});
+    const messageDoc = await  messages.find({$or: messageQuery});
+
+    const profileQuery = roomDoc.users.map(_profileId => {return {_id: _profileId}});
+    const roomMembers = await profiles.find({$or: profileQuery})    
+    roomMembers.forEach(member => {delete member.password});
+
+    io.to(roomId).emit('reciveMessages', {
+        roomId: roomId,  
+        roomMembers: roomMembers,
+        messages: messageDoc
     });
 }
 
-function emitRoomUpdate(profileId, socketId){
-    rooms.find({users: { $in: [profileId]}}, (err, roomsDoc)=>{
-        if(err) myLogger.error(err);
-        io.to(socketId).emit('roomsUpdate', roomsDoc);
-    });
+async function emitRoomUpdate(profileId, socketId){
+    const roomsDoc = await rooms.find({users: { $in: [profileId]}});
+    io.to(socketId).emit('roomsUpdate', roomsDoc);
 }
 
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
@@ -128,14 +130,18 @@ io.on('connection', socket =>{
     myLogger.debug(`'${socket.request.user.username}' connected with socket id ${socket.id} in session ${session.id}`);
     myLogger.info(`'${socket.request.user.username}' connected with socket id ${socket.id} in session ${session.id}`);
 
-    emitRoomUpdate(socket.request.user.id, socket.id);
+    (async () => {
+        const roomsDoc = await rooms.find({users: { $in: [socket.request.user.id]}});
+        roomsDoc.forEach(roomDoc => socket.join(roomDoc._id) );
+        emitRoomUpdate(socket.request.user.id, socket.id);
+    })();
     
     socket.on('disconnect', () => {
         myLogger.info(`'${socket.request.user.username}' disconnected from socket with id ${socket.id} in session ${session.id}`);
         myLogger.debug(`'${socket.request.user.username}' disconnected from socket with id ${socket.id} in session ${session.id}`);
     });
 
-    socket.on('newRoom', data => {
+    socket.on('newRoom', async data => {
         // NB: sanetize data
         myLogger.debug(`New room '${data.roomName}' created by '${socket.request.user.username}'`);
 
@@ -145,29 +151,26 @@ io.on('connection', socket =>{
             messages: [],
             users: [profileId]
         };
- 
-        rooms.insert(newRoom, (err, roomDoc) => {
-            if(err) myLogger.error(err);
-            socket.join(roomDoc._id);
-        });
 
+        const roomDoc = await rooms.insert(newRoom);
+        socket.join(roomDoc._id);
+ 
         emitRoomUpdate(profileId, socket.id);
 
     });
 
-    socket.on('addUserToRoom', data => {
+    socket.on('addUserToRoom', async data => {
         // NB: sanetize data
         // NB: Check if socket/user has access to requested room
 
         myLogger.debug('Trying to add user to room');
 
-        profiles.findOne({email: data.email}, (err, profileDoc) =>{
-            if(err) myLogger.error(err);
-            if(profileDoc){
-                rooms.update({ _id: data.roomId}, { $push: {users: profileDoc._id}});
-                emitRoomUpdate(profileDoc._id, socket.id);
-            }
-        });
+        const profileDoc = await profiles.findOne({email: data.email});
+        if(profileDoc){
+            await rooms.update({ _id: data.roomId}, { $push: {users: profileDoc._id}});
+            emitRoomUpdate(profileDoc._id, socket.id);
+        }
+
     });
 
     socket.on('getRoomMessages', data => {
@@ -189,24 +192,20 @@ io.on('connection', socket =>{
             message: data.message,
             timestamp: Date.now()
         }
- 
-        messages.insert(newMessage, (err, messageDoc) => {
-            if(err) myLogger.error(err);
-            rooms.findOne({_id: data.roomId}, (err, roomDoc) =>{
-                if(err) myLogger.error(err);
-                if(!roomDoc)
-                    myLogger.error('Room id not regonized on message event');
-                else
-                    rooms.update({ _id: roomDoc._id}, { $push: {messages: messageDoc._id}});    
-                emitRoomMessages(data.roomId);
-            });
-        });
 
+        const messageDoc = await messages.insert(newMessage);
+        const roomDoc = await rooms.findOne({_id: data.roomId});
+        if(!roomDoc)
+            myLogger.error('Room id not regonized on message event');
+        else
+            rooms.update({ _id: roomDoc._id}, { $push: {messages: messageDoc._id}});    
+        emitRoomMessages(data.roomId);
     });
 });
 
-server.listen(3000, () => {
-   console.log('listening on port 3000');
+server.listen(process.env.PORT, () => {
+    myLogger.info(`Server stared at port ${process.env.PORT}`);
+    console.log('listening on port ' + process.env.PORT);
 });
 
 

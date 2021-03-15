@@ -16,23 +16,22 @@ module.exports = (app, profiles) => {
         response.sendFile('/public/index.html', {root: __dirname + '/..'});
     }); 
     
-    app.post('/register', checkNotAuthenticated, (request, response) => {
+    app.post('/register', checkNotAuthenticated, async (request, response) => {
         // NB: sanetize data
 
         const {email, username, password, password_confirm} = request.body;
         if(password != password_confirm)
             response.json({status: 'failure', details:'passwords dont match'});
     
-        profiles.findOne({email: email}, async (err, profile) => {
-            if(profile){
-                response.json({status: 'failure', details:'email already registered'})
-            }else{
-                const hashedPassword = await bcrypt.hash(password, 10);
-                profiles.insert({email: email, username: username, password: hashedPassword});
-                
-                response.json({status: 'success', details:'user registered'});
-            }
-        });
+        const profile = await profiles.findOne({email: email});
+        if(profile){
+            response.json({status: 'failure', details:'email already registered'})
+        }else{
+            const hashedPassword = await bcrypt.hash(password, 10);
+            await profiles.insert({email: email, username: username, password: hashedPassword});
+            
+            response.json({status: 'success', details:'user registered'});
+        }
     });
 
     app.get('/login', checkNotAuthenticated, (request, response) => {

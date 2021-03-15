@@ -1,0 +1,21 @@
+{
+  "name": "nedb_promises",
+  "version": "1.0.0",
+  "description": "wrapper for nedb with promises instead of callbacks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+},
+  "keywords": [
+    "nedb",
+    "wrapper",
+    "promises"
+  ],
+  "author": "Henrik Melfald Kittang",
+  "license": "MIT",
+  "dependencies": {
+    "nedb": "^1.8.0",
+    "nodemon": "^2.0.7"
+  }
+}

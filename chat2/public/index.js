@@ -32,9 +32,7 @@ function appendMessage(data) {
 }
 
 
-const socket = io.connect({
-    auth: { token: `Bearer ${localStorage.getItem('jwt')}` }
-});
+const socket = io.connect();
 
 socket.on('connect', data => {
 
@@ -70,39 +68,48 @@ socket.on('connect', data => {
     });
 
     socket.on('roomsUpdate', data => {
+        // Graps the wrapper and resets it
         const room_btn_wrapper = document.querySelector('#room_btn_wrapper');
         room_btn_wrapper.innerHTML = '';
+
         data.forEach(room => {
+
+            // Creates new button and sets its name and value with the room data
             const newBtn = document.createElement('button');
             newBtn.textContent = room.name;
             newBtn.value = room._id;
+
+            // Click event to change current room
             newBtn.addEventListener('click', evt =>{
                 sessionStorage.setItem('currentRoomId', evt.target.value);
                 document.querySelector('#chat_header').textContent = evt.target.textContent;
                 socket.emit('getRoomMessages', {roomId: evt.target.value});
             });
+
             room_btn_wrapper.append(newBtn);
         });
+
+        // Selects the first room as the default room
+        room_btn_wrapper.childNodes[0].click();
     });
 
     socket.on('reciveMessages', data => {
+        if(data.roomId != sessionStorage.getItem('currentRoomId')) return;
+
         const messagesContainer = document.querySelector('.messagesContainer');
         messagesContainer.innerHTML = '';
-        console.log(data);
-        data.sort((a, b) => { return a.timestamp - b.timestamp })
-        data.forEach(element => {
+
+        data.messages.sort((a, b) => { return a.timestamp - b.timestamp })
+        data.messages.forEach(element => {
             appendMessage(element);
         });
     });
 
     socket.on('connect_error', (err) => {
-        if(err.message === 'Token no longer valid'){
-            
-        }
-        console.log(err instanceof Error); // true
         console.log(err.message); // not authorized
-        console.log(err.data); // { content: "Please retry later" }        
         
+        // window.location.replace('/login'); ???
+
         // redirect user to login page perhaps?
       });
 
